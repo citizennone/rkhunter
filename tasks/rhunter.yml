@@ -1,0 +1,71 @@
+- name: Apt update
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install RKHunter package with dependencies
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - rkhunter
+    - unhide
+
+- name: Copy rkhunter.conf
+  ansible.builtin.template:
+    src: rkhunter/rkhunter.conf.j2
+    dest: /etc/rkhunter.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create required directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /var/lib/rkhunter/tmp
+    - /usr/lib/rkhunter/scripts
+    - /usr/lib/rkhunter/dbdir
+    - /usr/lib/rkhunter/dbdir/i18n
+
+- name: RKHunter full update
+  ansible.builtin.command: rkhunter --update
+  register: rkhunter_update
+  changed_when: "'No update' not in rkhunter_update.stdout"
+  failed_when: false
+
+- name: Update RKHunter properties
+  ansible.builtin.command: rkhunter --propupd --nocolors
+  register: rkhunter_propu
+  changed_when: false
+  failed_when: rkhunter_propu.rc != 0
+
+- name: Run RKHunter scan
+  ansible.builtin.command: rkhunter --check --sk --nocolors
+  register: rkhunter_scan
+  changed_when: false
+  failed_when: rkhunter_scan.rc not in [0, 1]
+
+- name: Check for unhide installed
+  ansible.builtin.command: grep -A2 "hidden_procs" /var/log/rkhunter.log
+  register: procs_output
+  changed_when: false
+
+- name: Alert when unhide is missing
+  ansible.builtin.debug:
+    msg: "unhide seems to be missing, please double check"
+  when: "\"Found the 'unhide' command\" not in procs_output.stdout"
+
+- name: Update RKHunter database
+  ansible.builtin.command: rkhunter --update
+  register: update_status
+  changed_when: true
+
+- name: Copy cronjob for everyday scans
+  ansible.builtin.template:
+    src: rkhunter/rkhunter-scan.j2
+    dest: /etc/cron.d
+    owner: root
+    group: root
+    mode: '0644'

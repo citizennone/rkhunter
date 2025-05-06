@@ -1,0 +1,43 @@
+Unattended-Upgrade::Origins-Pattern {
+    "origin=Debian,codename={{ ansible_distribution_release }},label=Debian";
+    "origin=Debian,codename={{ ansible_distribution_release }},label=Debian-Security";
+    "origin=Debian,codename={{ ansible_distribution_release }}-updates,label=Debian";
+};
+
+Unattended-Upgrade::Package-Blacklist {
+{% for package in unattended_blacklist | default([]) %}
+  "{{ package }}";
+{% endfor %}
+};
+
+Unattended-Upgrade::AutoFixInterruptedDpkg "true";
+
+Unattended-Upgrade::MailOnlyOnError "true";
+
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+
+Unattended-Upgrade::Remove-New-Unused-Dependencies "true";
+
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+
+Unattended-Upgrade::Automatic-Reboot "false";
+
+Unattended-Upgrade::Automatic-Reboot-WithUsers "false";
+
+Unattended-Upgrade::SyslogEnable "true";
+
+Unattended-Upgrade::SyslogFacility "daemon";
+
+Unattended-Upgrade::Debug "false";
+
+Unattended-Upgrade::Mail "{{ unattended_email }}";
+
+// Unattended-Upgrade::Automatic-Reboot-Time "02:00";
+
+// Acquire::http::Dl-Limit "70";
+
+// Unattended-Upgrade::OnlyOnACPower "true";
+
+// Unattended-Upgrade::Skip-Updates-On-Metered-Connections "true";
+
+// Unattended-Upgrade::Verbose "false";

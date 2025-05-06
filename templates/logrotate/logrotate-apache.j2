@@ -1,0 +1,31 @@
+{% if logrotate_apache.path is defined %}
+{{ logrotate_apache.path }}
+{% elif logrotate_apache.paths is defined %}
+{% for path in logrotate_apache.paths %}
+{{ path }}
+{% endfor %}
+{% endif %}
+{
+  {% if logrotate_apache.frequency is defined %}
+    {{ logrotate_apache.frequency }}
+  {% endif %}
+  {% if logrotate_apache.rotate is defined %}
+    rotate {{ logrotate_apache.rotate }}
+  {% endif %}
+  {% if logrotate_apache.options is defined %}
+    {% for option in logrotate_apache.options %}
+      {{ option }}
+    {% endfor %}
+  {% endif %}
+  create {{ logrotate_apache.create }}
+  {% if logrotate_apache.compress %}
+    compress
+  {% endif %}
+  {% if logrotate_apache.postrotate is defined %}
+    postrotate
+  {{ logrotate_apache.postrotate | indent(4, true) }}
+    endscript
+  {% endif %}
+}
+
+

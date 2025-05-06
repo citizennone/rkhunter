@@ -1,0 +1,5 @@
+- name: Check what packages are installed on server
+  ansible.builtin.command: >
+    dpkg -l | awk '{print $2}' | grep -xE '{{ logrotate_detect_packages }}' || true
+  register: installed_packages
+  changed_when: false

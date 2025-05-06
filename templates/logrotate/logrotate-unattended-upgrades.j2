@@ -1,0 +1,31 @@
+{% if logrotate_unattended_upgrades.path is defined %}
+{{ logrotate_unattended_upgrades.path }}
+{% elif logrotate_unattended_upgrades.paths is defined %}
+{% for path in logrotate_unattended_upgrades.paths %}
+{{ path }}
+{% endfor %}
+{% endif %}
+{
+  {% if logrotate_unattended_upgrades.frequency is defined %}
+    {{ logrotate_unattended_upgrades.frequency }}
+  {% endif %}
+  {% if logrotate_unattended_upgrades.rotate is defined %}
+    rotate {{ logrotate_unattended_upgrades.rotate }}
+  {% endif %}
+  {% if logrotate_unattended_upgrades.options is defined %}
+    {% for option in logrotate_unattended_upgrades.options %}
+      {{ option }}
+    {% endfor %}
+  {% endif %}
+  create {{ logrotate_unattended_upgrades.create }}
+  {% if logrotate_unattended_upgrades.compress %}
+    compress
+  {% endif %}
+  {% if logrotate_unattended_upgrades.postrotate is defined %}
+    postrotate
+  {{ logrotate_unattended_upgrades.postrotate | indent(4, true) }}
+    endscript
+  {% endif %}
+}
+
+

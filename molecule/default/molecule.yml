@@ -1,0 +1,21 @@
+driver:
+  name: docker
+
+platforms:
+  - name: instance
+    build_image: true
+    dockerfile: Dockerfile
+    image: debian_python_molecule
+    privileged: true
+    tty: true
+
+provisioner:
+  name: ansible
+  lint: |
+    ansible-lint
+  inventory:
+    links:
+      group_vars: ../../group_vars/
+      host_vars: ../../host_vars/
+  env:
+    ANSIBLE_ROLES_PATH: ../../..

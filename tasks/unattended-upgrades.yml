@@ -1,0 +1,23 @@
+- name: Apt update
+  ansible.builtin.apt:
+    update_cache: true
+
+- Name: Install unattended-upgrades package
+  ansible.builtin.apt:
+    name:
+      - unattended-upgrades
+    state: present
+
+- name: Copy Debian 20auto-upgrades conf file
+  when: ansible_distribution == 'Debian'
+  ansible.builtin.copy:
+    src: unattended_upgrades/20auto-upgrades
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    mode: '0644'
+
+- name: Copy Debian 50unattended-upgrades conf file
+  when: ansible_distribution == 'Debian'
+  ansible.builtin.template:
+    src: unattended_upgrades/50unattended-upgrades.j2
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    mode: '0644'

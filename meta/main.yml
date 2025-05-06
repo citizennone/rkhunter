@@ -1,0 +1,31 @@
+---
+galaxy_info:
+  role_name: debian_hardening_lite
+  author: Marcin Dołęgowski
+  namespace: citizennone
+  description: >
+    Lightweight security hardening role for Debian-based systems. Includes tools like rkhunter, unattended-upgrades,
+    basic SSH and sudo lockdown, log hygiene, and minimal service exposure. Ideal for minimal servers, labs, and DevOps environments.
+
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+        - bullseye
+        - buster
+
+  galaxy_tags:
+    - debian
+    - security
+    - hardening
+    - ssh
+    - sudo
+    - monitoring
+    - system
+
+dependencies: []
+
+collections:
+  - ansible.posix

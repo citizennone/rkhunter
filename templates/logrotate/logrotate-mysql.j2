@@ -1,0 +1,31 @@
+{% if logrotate_mysql.path is defined %}
+{{ logrotate_mysql.path }}
+{% elif logrotate_mysql.paths is defined %}
+{% for path in logrotate_mysql.paths %}
+{{ path }}
+{% endfor %}
+{% endif %}
+{
+  {% if logrotate_mysql.frequency is defined %}
+    {{ logrotate_mysql.frequency }}
+  {% endif %}
+  {% if logrotate_mysql.rotate is defined %}
+    rotate {{ logrotate_mysql.rotate }}
+  {% endif %}
+  {% if logrotate_mysql.options is defined %}
+    {% for option in logrotate_mysql.options %}
+      {{ option }}
+    {% endfor %}
+  {% endif %}
+  create {{ logrotate_mysql.create }}
+  {% if logrotate_mysql.compress %}
+    compress
+  {% endif %}
+  {% if logrotate_mysql.postrotate is defined %}
+    postrotate
+  {{ logrotate_mysql.postrotate | indent(4, true) }}
+    endscript
+  {% endif %}
+}
+
+

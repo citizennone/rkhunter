@@ -1,0 +1,68 @@
+logrotate_services:
+  - name: rkhunter
+    enabled: "{{ logrotate_rkhunter.enabled }}"
+    template: "logrotate-rkhunter.j2"
+
+  - name: unattended-upgrades
+    enabled: "{{ logrotate_unattended_upgrades.enabled }}"
+    template: "logrotate-unattended-upgrades.j2"
+
+  - name: fail2ban
+    enabled: "{{ logrotate_fail2ban.enabled }}"
+    template: "logrotate-fail2ban.j2"
+
+  - name: auth
+    enabled: "{{ logrotate_auth.enabled }}"
+    template: "logrotate-auth.j2"
+
+  - name: apache2
+    enabled: "{{ logrotate_apache.enabled }}"
+    template: "logrotate-apache.j2"
+
+  - name: nginx
+    enabled: "{{ logrotate_nginx.enabled }}"
+    template: "logrotate-nginx.j2"
+
+  - name: syslogs
+    enabled: "{{ logrotate_syslogs.enabled }}"
+    template: "logrotate-syslogs.j2"
+
+  - name: auditd
+    enabled: "{{ logrotate_auditd.enabled }}"
+    template: "logrotate-auditd.j2"
+
+  - name: haproxy
+    enabled: "{{ logrotate_haproxy.enabled }}"
+    template: "logrotate-haproxy.j2"
+
+  - name: varnish
+    enabled: "{{ logrotate_varnish.enabled }}"
+    template: "logrotate-varnish.j2"
+
+  - name: postgresql
+    enabled: "{{ logrotate_postgresql.enabled }}"
+    template: "logrotate-postgresql.j2"
+
+  - name: mysql-server
+    enabled: "{{ logrotate_mysql.enabled }}"
+    template: "logrotate-mysql.j2"
+
+  - name: redis-server
+    enabled: "{{ logrotate_redis.enabled }}"
+    template: "logrotate-redis.j2"
+
+  - name: mongodb-org
+    enabled: "{{ logrotate_mongodb.enabled }}"
+    template: "logrotate-mongodb.j2"
+
+  - name: zabbix-server
+    enabled: "{{ logrotate_zabbix.enabled }}"
+    template: "logrotate-zabbix.j2"
+
+  - name: rabbitmq-server
+    enabled: "{{ logrotate_rabbitmq.enabled }}"
+    template: "logrotate-rabbitmq.j2"
+
+  - name: kafka
+    enabled: "{{ logrotate_kafka.enabled }}"
+    template: "logrotate-kafka.j2"

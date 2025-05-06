@@ -1,0 +1,9 @@
+---
+- name: Prepare container for Ansible
+  hosts: all
+  become: true
+  tasks:
+    - name: Install Python 3
+      ansible.builtin.raw: |
+        apt-get update && apt-get install -y python3
+      changed_when: true

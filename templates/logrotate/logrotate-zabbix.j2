@@ -1,0 +1,31 @@
+{% if logrotate_zabbix.path is defined %}
+{{ logrotate_zabbix.path }}
+{% elif logrotate_zabbix.paths is defined %}
+{% for path in logrotate_zabbix.paths %}
+{{ path }}
+{% endfor %}
+{% endif %}
+{
+  {% if logrotate_zabbix.frequency is defined %}
+    {{ logrotate_zabbix.frequency }}
+  {% endif %}
+  {% if logrotate_zabbix.rotate is defined %}
+    rotate {{ logrotate_zabbix.rotate }}
+  {% endif %}
+  {% if logrotate_zabbix.options is defined %}
+    {% for option in logrotate_zabbix.options %}
+      {{ option }}
+    {% endfor %}
+  {% endif %}
+  create {{ logrotate_zabbix.create }}
+  {% if logrotate_zabbix.compress %}
+    compress
+  {% endif %}
+  {% if logrotate_zabbix.postrotate is defined %}
+    postrotate
+  {{ logrotate_zabbix.postrotate | indent(4, true) }}
+    endscript
+  {% endif %}
+}
+
+

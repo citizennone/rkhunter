@@ -1,0 +1,7 @@
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+# Restore SSH config after 30 mins
+*/30 * * * * root cp /etc/ssh/sshd_config.bck /etc/ssh/sshd_config && systemctl restart ssh
+
