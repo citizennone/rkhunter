@@ -1,6 +1,7 @@
 namespace: citizennone
 name: debian_hardening_lite
 version: 1.0.0
+src: https://github.com/CitizenNone/debian_hardening_lite
 readme: README.md
 authors:
   - Marcin Dołęgowski <marcin.dolegowski@debian.org.pl>
