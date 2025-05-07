@@ -1,0 +1,57 @@
+# System files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.bak
+*.tmp
+*.old
+*.log
+*.retry
+*.orig
+
+# Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.coverage
+coverage.xml
+*.egg-info/
+*.eggs/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Ansible specific
+*.retry
+*.vault
+roles/
+collections/
+inventory/
+molecule/.molecule
+molecule/.tox
+molecule/.cache
+molecule/.pytest_cache
+molecule/__pycache__
+molecule/test_results/
+molecule/*.log
+
+# Terraform (if you use it)
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+*.tfvars
+
+# Packer (if you use it)
+packer_cache/
+*.box
+
+# Galaxy
+*.tar.gz
+
+# General
+*~
+
