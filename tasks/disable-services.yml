@@ -8,5 +8,7 @@
     state: stopped
     enabled: false
     masked: true
-  loop: disabled_services
+  loop: "{{ disabled_services }}"
+  loop_control:
+    label: "{{ item }}"
   when: item + '.service' in ansible_facts.services and services_enabled

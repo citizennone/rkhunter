@@ -18,6 +18,7 @@
   delegate_to: localhost
   register: local_ssh_key
   when: ssh_key_auth_enabled
+  become: false
 
 - name: Fail if no SSH key is found
   ansible.builtin.fail:
@@ -30,6 +31,7 @@
   register: ssh_key_content
   delegate_to: localhost
   when: ssh_key_auth_enabled
+  become: false
 
 - name: Ensure .ssh directory exists
   ansible.builtin.file:

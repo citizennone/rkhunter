@@ -1,6 +1,17 @@
-# molecule/default/Dockerfile
 FROM debian:bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y python3 sudo && apt-get clean
+# Install packages
+RUN apt-get update && \
+    apt-get install -y python3 sudo openssh-server && \
+    apt-get clean
+
+# Configure SSH
+RUN mkdir /var/run/sshd && \
+    echo 'root:toor' | chpasswd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's@session\s\+required\s\+pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
+
+# Start SSH
+CMD ["/usr/sbin/sshd", "-D"]

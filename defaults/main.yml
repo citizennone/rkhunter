@@ -1,12 +1,12 @@
 # main on/off switches - change to true/false to enable/disable
 molecule_test_enabled: false # local docker image for role tests
 rkhunter_enabled: true # rootkits and backdors
-fail2ban_enabled: false # intrusion prevention
+fail2ban_enabled: true # intrusion prevention
 logrotate_enabled: true # logs hygiene
 unattended_upgrades_enabled: true # for your automated packages management
-ssh_enabled: false # ssh hardening
-sysctl_enabled: false # sysctl hardening
-services_enabled: false # services hardening
+ssh_enabled: true # ssh hardening
+sysctl_enabled: true # sysctl hardening
+services_enabled: true # services hardening
 
 # rkhunter section
 rkhunter_email: your@email.com
@@ -315,22 +315,26 @@ logrotate_detect_packages: >-
 ssh_key_auth_enabled: true # change to false if you want to disable
 ssh_admin_user: "admin" # you may change from admin to the name of your choice
 ssh_admin_key_path: "~/.ssh/id_rsa.pub" # change if you keep your keys outside of default path
+# ssh restart options, make sure only one is enabled
+ssh_command_restart: false # enable if you have systemctl support
+ssh_init_restart: true # enable for init.d restart
+ssh_systemd_restart: false # enable for ssh froce restart
 sshd_entries:
   - regexp: '^PermitRootLogin'
     line: 'PermitRootLogin no'
   - regexp: '^PasswordAuthentication'
     line: 'PasswordAuthentication no'
-  - regexp: '^Port'
-    line: 'Port 222'
-  - regexp: '^AllowUsers'
+  # - regexp: '^Port' # security by obscurity
+  #   line: 'Port 222' # change for port of your choice and change the same in molecule.yml for test purpose
+  - regexp: '^[# ]*AllowUsers'
     line: 'AllowUsers admin'
-  - regexp: '^Banner'
+  - regexp: '^[# ]*Banner'
     line: 'Banner /etc/issue.net'
-  - regexp: '^AllowGroups'
+  - regexp: '^[# ]*AllowGroups'
     line: 'AllowGroups sshusers'
-  - regexp: '^ClientAliveInterval'
+  - regexp: '^[# ]*ClientAliveInterval'
     line: 'ClientAliveInterval 300'
-  - regexp: '^LoginGraceTime'
+  - regexp: '^[# ]*LoginGraceTime'
     line: 'LoginGraceTime 30s'
 banner_message: | # modify the message if you wish
   #################################
@@ -340,28 +344,28 @@ banner_message: | # modify the message if you wish
 # sysctl hardening part
 # sysctl_hardening_enabled: true # change to false if you want to disable
 sysctl_entries:
-  - regexp: '^net.ipv4.icmp_echo_ignore_all'
+  - regexp: '^[#; ]*net.ipv4.icmp_echo_ignore_all'
     line: 'net.ipv4.icmp_echo_ignore_all = 1'
-  - regexp: '^net.ipv4.conf.all.rp_filter'
+  - regexp: '^[#; ]*net.ipv4.conf.all.rp_filter'
     line: 'net.ipv4.conf.all.rp_filter = 1'
-  - regexp: '^net.ipv4.conf.default.rp_filter'
+  - regexp: '^[#; ]*net.ipv4.conf.default.rp_filter'
     line: 'net.ipv4.conf.default.rp_filter = 1'
-  - regexp: '^kernel.dmesg_restrict'
+  - regexp: '^[#; ]*kernel.dmesg_restrict'
     line: 'kernel.dmesg_restrict = 1'
-  - regexp: '^kernel.kptr_restrict'
+  - regexp: '^[#; ]*kernel.kptr_restrict'
     line: 'kernel.kptr_restrict = 2'
-  - regexp: '^net.ipv4.tcp_syncookies'
+  - regexp: '^[#; ]*net.ipv4.tcp_syncookies'
     line: 'net.ipv4.tcp_syncookies = 1'
 
 # services part
-disabled_services: # Add or remove service
-  - avahi-daemon
+# add to the list what you want to disable
+disabled_services:
   - cups
-  - rpcbind
-  - telnet
   - ftp
-  - nfs-server
+  - telnet
+  - rpcbind
   - smbd
+  - nfs-server
   - bluetooth
   - ModemManager
   - snapd

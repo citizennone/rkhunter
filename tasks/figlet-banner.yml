@@ -1,8 +1,11 @@
+- name: Apt update
+  ansible.builtin.apt:
+    update_cache: true
+
 - name: Install figlet package
   ansible.builtin.apt:
     name: figlet
     state: present
-  update_cache: true
 
 - name: Make sure banner file exists
   ansible.builtin.stat:
@@ -20,4 +23,6 @@
 
 - name: Create banner message using figlet
   ansible.builtin.shell: set -o pipefail && echo "{{ banner_message }}" | figlet > /etc/issue.net
+  args:
+    executable: /bin/bash
   changed_when: true

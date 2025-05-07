@@ -2,6 +2,10 @@
   ansible.builtin.include_tasks: configure-admin-user.yml
   when: ssh_enabled | default(false)
 
+- name: Change sshd config
+  ansible.builtin.include_tasks: sshd-config.yml
+  when: ssh_enabled | default(false)
+
 - name: Enable banner
   ansible.builtin.include_tasks: figlet-banner.yml
   when: ssh_enabled | default(false)

@@ -2,7 +2,7 @@
   ansible.builtin.apt:
     update_cache: true
 
-- Name: Install unattended-upgrades package
+- name: Install unattended-upgrades package
   ansible.builtin.apt:
     name:
       - unattended-upgrades

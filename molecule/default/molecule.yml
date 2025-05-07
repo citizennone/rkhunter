@@ -8,6 +8,8 @@ platforms:
     image: debian_python_molecule
     privileged: true
     tty: true
+    published_ports:
+      - "2222:22"
 
 provisioner:
   name: ansible

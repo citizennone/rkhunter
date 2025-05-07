@@ -1,4 +1,0 @@
-- name: Restart sysctl
-  ansible.builtin.command: sysctl --system
-  register: sysctl_reload
-  changed_when: "'error' not in sysctl_reload.stderr"

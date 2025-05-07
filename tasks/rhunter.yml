@@ -65,7 +65,7 @@
 - name: Copy cronjob for everyday scans
   ansible.builtin.template:
     src: rkhunter/rkhunter-scan.j2
-    dest: /etc/cron.d
+    dest: /etc/cron.d/rkhunter-scan
     owner: root
     group: root
     mode: '0644'

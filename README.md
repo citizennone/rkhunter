@@ -83,7 +83,7 @@ MIT License
 
 This Ansible role is provided in good faith and intended for general-purpose hardening on Debian systems.  
 It is your responsibility to test the role in a staging environment before applying to production.  
-The author is **not responsible** for any potential data loss, access lockout, or service disruption caused by misuse or incorrect application of this role.
+The author is **not responsible** for any potential data loss, access lockout, service disruption or any other damage caused by use, misuse or incorrect application of this role.
 
 Use at your own risk.
 

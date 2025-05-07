@@ -4,7 +4,7 @@
     owner: root
     group: root
     mode: '0644'
-    state: file
+    state: touch
   when: sysctl_enabled
 
 - name: Setup sysctl hardening

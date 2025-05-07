@@ -1,5 +1,5 @@
 - name: Backup sshd_conf
-  ansible.builtin.command: cp /etc/ssh/sshd_config cp /etc/ssh/sshd_config.bck
+  ansible.builtin.command: cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bck
   changed_when: true
 
 - name: Set crontab to restore file in 30 minutes
@@ -16,7 +16,7 @@
 
 - name: Configure sshd_conf file
   ansible.builtin.lineinfile:
-    dest: /etc/ssh/sshd_conf
+    dest: /etc/ssh/sshd_config
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
     state: present
