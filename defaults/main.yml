@@ -320,11 +320,11 @@ ssh_command_restart: false # enable if you have systemctl support
 ssh_init_restart: true # enable for init.d restart
 ssh_systemd_restart: false # enable for ssh froce restart
 sshd_entries:
-  - regexp: '^PermitRootLogin'
+  - regexp: '^[# ]*PermitRootLogin'
     line: 'PermitRootLogin no'
-  - regexp: '^PasswordAuthentication'
+  - regexp: '^[# ]*PasswordAuthentication'
     line: 'PasswordAuthentication no'
-  # - regexp: '^Port' # security by obscurity
+  # - regexp: '^[# ]*Port' # security by obscurity
   #   line: 'Port 222' # change for port of your choice and change the same in molecule.yml for test purpose
   - regexp: '^[# ]*AllowUsers'
     line: 'AllowUsers admin'
