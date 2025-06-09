@@ -1,27 +1,11 @@
-- name: Enable fail2ban
-  ansible.builtin.include_tasks: tasks/fail2ban.yml
-  when: fail2ban_enabled | default(false)
+- name: Install RKHunter related tools
+  ansible.builtin.include_tasks: rkhunter-utils.yml
+  when: rkhunter_enabled | default(false) and rkhunter_install_utils | default(false)
+- name: Enable rkhunter for Debian
 
-- name: Enable rkhunter
-  ansible.builtin.include_tasks: tasks/rhunter.yml
-  when: rkhunter_enabled | default(false)
+  ansible.builtin.include_tasks: rkhunter-debian.yml
+  when: rkhunter_enabled | default(false) and ansible_os_family == "Debian"
 
-- name: Enable logrotate
-  ansible.builtin.include_tasks: tasks/logrotate.yml
-  when: logrotate_enabled | default(false)
-
-- name: Enable unattended-upgrades
-  ansible.builtin.include_tasks: tasks/unattended-upgrades.yml
-  when: unattended_upgrades_enabled | default(false)
-
-- name: Enable ssh
-  ansible.builtin.include_tasks: tasks/ssh-hardening.yml
-  when: ssh_enabled | default(false)
-
-- name: Enable sysctl
-  ansible.builtin.include_tasks: tasks/sysctl.yml
-  when: sysctl_enabled | default(false)
-
-- name: Enable services
-  ansible.builtin.include_tasks: tasks/disable-services.yml
-  when: services_enabled | default(false)
+- name: Enable rkhunter for Redhat
+  ansible.builtin.include_tasks: rkhunter-redhat.yml
+  when: rkhunter_enabled | default(false) and (ansible_os_family == "RedHat" or ansible_distribution == "Fedora")

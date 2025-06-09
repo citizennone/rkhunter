@@ -1,0 +1,29 @@
+{% if logrotate_rkhunter.path is defined %}
+{{ logrotate_rkhunter.path }}
+{% elif logrotate_rkhunter.paths is defined %}
+{% for path in logrotate_rkhunter.paths %}
+{{ path }}
+{% endfor %}
+{% endif %}
+{
+{% if logrotate_rkhunter.frequency is defined %}
+    {{ logrotate_rkhunter.frequency }}
+{% endif %}
+{% if logrotate_rkhunter.rotate is defined %}
+    rotate {{ logrotate_rkhunter.rotate }}
+{% endif %}
+{% if logrotate_rkhunter.options is defined %}
+{% for option in logrotate_rkhunter.options %}
+    {{ option }}
+{% endfor %}
+{% endif %}
+    create {{ logrotate_rkhunter.create }}
+{% if logrotate_rkhunter.compress %}
+    compress
+{% endif %}
+{% if logrotate_rkhunter.postrotate is defined and logrotate_rkhunter.postrotate|trim != "" %}
+    postrotate
+{{ logrotate_rkhunter.postrotate | indent(8, true) }}
+    endscript
+{% endif %}
+}

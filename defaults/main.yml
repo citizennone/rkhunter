@@ -1,61 +1,59 @@
 # main on/off switches - change to true/false to enable/disable
-molecule_test_enabled: false # local docker image for role tests
+molecule_test_enabled: true # local docker image for role tests
 rkhunter_enabled: true # rootkits and backdors
-fail2ban_enabled: true # intrusion prevention
-logrotate_enabled: true # logs hygiene
-unattended_upgrades_enabled: true # for your automated packages management
-ssh_enabled: true # ssh hardening
-sysctl_enabled: true # sysctl hardening
-services_enabled: true # services hardening
 
-# rkhunter section
+# rkhunter variables
 rkhunter_email: your@email.com
 rkhunter_cron:
   update_timer: "* * * * *"
   check_timer: "* * * * *"
 
-# unattended upgrades section
-unattended_email: your@email.com
-unattended_blacklist: # add or remove package from the list
-  - "docker*"
-  - "containerd*"
-  - "nginx*"
-  - "glibc*"
-  - "libc*"
-  - "linux-libc*"
-  - "grub*"
-  - "systemd*"
-  - "udev"
-  - "init*"
-  - "dbus*"
-  - "network-manager"
-  - "linux-image*"
-  - "linux-headers*"
-  - "linux-modules*"
-  - "openssh-server"
-  - "iptables*"
-  - "nftables*"
-  - "netplan*"
-  - "gpg*"
-  - "openssl*"
-  - "libssl*"
-  - "ca-certificates"
-  - "python*"
-  - "perl*"
-  - "ruby*"
+required_packages:
+  - rkhunter
+  - unhide # Debian only due to issues with obtaining current package on RHEL-alike platforms
 
-# fail2ban section
-fail2ban_alert_sender: your@email.com
-fail2ban_alert_receiver: your@email.com
-fail2ban_configs:
-  - apache-auth.conf
-  - nginx-auth.conf
-  - docker.conf
-  - sshd.conf
-  - vsftpd.conf
-  - recidive.conf
-fail2ban_templates:
-  - defaults-debian.conf.j2
+rkhunter_install_utils: true # Set up true to install utilities
+rkhunter_utils_debian:
+  - net-tools
+  - iproute2
+  - lsof
+  - grep
+  - sed
+  - perl
+  - which
+
+rkhunter_utils_redhat:
+  - net-tools
+  - iproute
+  - lsof
+  - grep
+  - sed
+  - perl
+  - which
+
+required_directories:
+  - /var/lib/rkhunter/tmp
+  - /usr/lib/rkhunter/scripts
+  - /usr/lib/rkhunter/dbdir
+  - /usr/lib/rkhunter/dbdir/i18n
+
+rkhunter_path: /usr/bin/rkhunter
+
+rkhunter_config_options:
+  update_mirrors: 1
+  cron_daily_run: true
+  allow_ssh_user: false
+  allow_ssh_root: 2
+  allow_syslog_remote: false
+  use_syslog: authpriv.notice
+  port_scan: 1
+  log_file: /var/log/rkhunter.log
+  show_summary: 1
+  scriptwhitelist: /usr/bin/unhide
+  scriptdir: /usr/lib/rkhunter/scripts
+  installdir: /usr
+  tmpdir: /var/lib/rkhunter/tmp
+  dbdir: /usr/lib/rkhunter/dbdir
 
 # logrotate section
 logrotate_rkhunter:
@@ -82,292 +80,3 @@ logrotate_unattended_upgrades:
     - notifempty
   create: "0640 root adm"
   postrotate: ""
-logrotate_fail2ban:
-  enabled: true # change to false if you want to disable
-  frequency: daily
-  path: /var/log/fail2ban.log
-  rotate: 14
-  compress: true
-  options:
-    - missingok
-    - notifempty
-  create: "0640 root adm"
-  postrotate: "fail2ban-client flushlogs > /dev/null || true"
-logrotate_auth:
-  enabled: true # change to false if you want to disable
-  frequency: daily
-  path: /var/log/auth.log
-  rotate: 14
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - sharedscripts
-  create: "0640 root adm"
-  postrotate: "/etc/init.d/rsyslog reload > /dev/null || true"
-logrotate_apache:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /var/log/apache2/*.log
-  rotate: 14
-  compress: true
-  create: "0640 root adm"
-  options:
-    - delaycompress
-    - notifempty
-    - missingok
-    - sharedscripts
-  postrotate: |
-    if [ -f /var/run/apache2/apache2.pid ]; then
-      /usr/sbin/apachectl graceful > /dev/null 2>&1 || true
-    fi
-logrotate_nginx:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /var/log/nginx/*.log
-  rotate: 14
-  compress: true
-  create: "0640 root adm"
-  options:
-    - delaycompress
-    - notifempty
-    - missingok
-    - sharedscripts
-  postrotate: |
-    [ -f /var/run/nginx.pid ] && kill -USR1 $(cat /var/run/nginx.pid) > /dev/null 2>&1 || true
-logrotate_syslogs:
-  enabled: true # change to false if you want to disable
-  frequency: daily
-  paths:
-    - /var/log/syslog
-    - /var/log/daemon.log
-    - /var/log/kern.log
-    - /var/log/messages
-  rotate: 7
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - sharedscripts
-  create: "0640 root adm"
-  postrotate: "/etc/init.d/rsyslog reload > /dev/null || true"
-logrotate_auditd:
-  enabled: true # change to false if you want to disable
-  frequency: daily
-  path: /var/log/audit/audit.log
-  rotate: 7
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-  create: "0640 root adm"
-  postrotate: "/etc/init.d/auditd reload > /dev/null || true"
-logrotate_haproxy:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /var/log/haproxy.log
-  rotate: 7
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-    - sharedscripts
-  create: "0640 root adm"
-  postrotate: |
-    if [ -f /run/haproxy.pid ]; then
-      kill -USR1 $(cat /run/haproxy.pid) > /dev/null 2>&1 || true
-    fi
-logrotate_varnish:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /var/log/varnish/varnishncsa.log
-  rotate: 7
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-    - sharedscripts
-  create: "0640 root adm"
-  postrotate: |
-    if [ -f /run/varnishd.pid ]; then
-      kill -HUP $(cat /run/varnishd.pid) > /dev/null 2>&1 || true
-    fi
-logrotate_postgresql:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /var/log/postgresql/postgresql-*.log
-  rotate: 14
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-    - sharedscripts
-  create: "0640 postgres adm"
-  postrotate: |
-    /usr/bin/pg_ctlcluster --skip-systemctl-redirect $(pg_lsclusters -h | awk '{print $1, $2}' | head -n1) reload > /dev/null 2>&1 || true
-logrotate_mysql:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /var/log/mysql/*.log
-  rotate: 7
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-    - sharedscripts
-  create: "0640 mysql adm"
-  postrotate: |
-    test -x /usr/bin/mysqladmin && /usr/bin/mysqladmin flush-logs > /dev/null 2>&1 || true
-logrotate_redis:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /var/log/redis/redis-server.log
-  rotate: 7
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-    - sharedscripts
-  create: "0640 redis adm"
-  postrotate: |
-    if [ -f /var/run/redis/redis-server.pid ]; then
-      kill -USR1 $(cat /var/run/redis/redis-server.pid) > /dev/null 2>&1 || true
-    fi
-logrotate_mongodb:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /var/log/mongodb/mongod.log
-  rotate: 7
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-    - sharedscripts
-  create: "0640 mongodb adm"
-  postrotate: |
-    if [ -f /var/run/mongod.pid ]; then
-      kill -HUP $(cat /var/run/mongod.pid) > /dev/null 2>&1 || true
-    fi
-logrotate_zabbix:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  paths:
-    - /var/log/zabbix/zabbix_server.log
-    - /var/log/zabbix/zabbix_agentd.log
-    - /var/log/zabbix/zabbix_proxy.log
-  rotate: 14
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-    - sharedscripts
-  create: "0640 zabbix adm"
-  postrotate: |
-    systemctl reload zabbix-server > /dev/null 2>&1 || true
-    systemctl reload zabbix-agent > /dev/null 2>&1 || true
-    systemctl reload zabbix-proxy > /dev/null 2>&1 || true
-logrotate_rabbitmq:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /var/log/rabbitmq/*.log
-  rotate: 7
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-    - sharedscripts
-  create: "0640 rabbitmq adm"
-  postrotate: |
-    if [ -f /var/run/rabbitmq/pid ]; then
-      kill -HUP $(cat /var/run/rabbitmq/pid) > /dev/null 2>&1 || true
-    fi
-logrotate_kafka:
-  enabled: false # change to true if you want to enable
-  frequency: daily
-  path: /opt/kafka/logs/*.log
-  rotate: 14
-  compress: true
-  options:
-    - missingok
-    - notifempty
-    - delaycompress
-    - sharedscripts
-  create: "0640 kafka adm"
-  postrotate: |
-    # Kafka usually handles logs internally, but HUP can be used if needed
-    # systemctl reload kafka > /dev/null 2>&1 || true
-    true
-logrotate_detect_packages: >-
-  nginx|kafka|postgresql|mysql-server|redis-server|mongodb-org|
-  zabbix-server(-pgsql)?|zabbix-proxy|haproxy|rabbitmq-server|
-  varnish|auditd|fail2ban|rkhunter
-
-# ssh hardening section
-ssh_key_auth_enabled: true # change to false if you want to disable
-ssh_admin_user: "admin" # you may change from admin to the name of your choice
-ssh_admin_key_path: "~/.ssh/id_rsa.pub" # change if you keep your keys outside of default path
-# ssh restart options, make sure only one is enabled
-ssh_command_restart: false # enable if you have systemctl support
-ssh_init_restart: true # enable for init.d restart
-ssh_systemd_restart: false # enable for ssh froce restart
-sshd_entries:
-  - regexp: '^[# ]*PermitRootLogin'
-    line: 'PermitRootLogin no'
-  - regexp: '^[# ]*PasswordAuthentication'
-    line: 'PasswordAuthentication no'
-  # - regexp: '^[# ]*Port' # security by obscurity
-  #   line: 'Port 222' # change for port of your choice and change the same in molecule.yml for test purpose
-  - regexp: '^[# ]*AllowUsers'
-    line: 'AllowUsers admin'
-  - regexp: '^[# ]*Banner'
-    line: 'Banner /etc/issue.net'
-  - regexp: '^[# ]*AllowGroups'
-    line: 'AllowGroups sshusers'
-  - regexp: '^[# ]*ClientAliveInterval'
-    line: 'ClientAliveInterval 300'
-  - regexp: '^[# ]*LoginGraceTime'
-    line: 'LoginGraceTime 30s'
-banner_message: | # modify the message if you wish
-  #################################
-  ## Welcome and Happy Computing ##
-  #################################
-
-# sysctl hardening part
-# sysctl_hardening_enabled: true # change to false if you want to disable
-sysctl_entries:
-  - regexp: '^[#; ]*net.ipv4.icmp_echo_ignore_all'
-    line: 'net.ipv4.icmp_echo_ignore_all = 1'
-  - regexp: '^[#; ]*net.ipv4.conf.all.rp_filter'
-    line: 'net.ipv4.conf.all.rp_filter = 1'
-  - regexp: '^[#; ]*net.ipv4.conf.default.rp_filter'
-    line: 'net.ipv4.conf.default.rp_filter = 1'
-  - regexp: '^[#; ]*kernel.dmesg_restrict'
-    line: 'kernel.dmesg_restrict = 1'
-  - regexp: '^[#; ]*kernel.kptr_restrict'
-    line: 'kernel.kptr_restrict = 2'
-  - regexp: '^[#; ]*net.ipv4.tcp_syncookies'
-    line: 'net.ipv4.tcp_syncookies = 1'
-
-# services part
-# add to the list what you want to disable
-disabled_services:
-  - cups
-  - ftp
-  - telnet
-  - rpcbind
-  - smbd
-  - nfs-server
-  - bluetooth
-  - ModemManager
-  - snapd
-  - lxd
-  - iscsi

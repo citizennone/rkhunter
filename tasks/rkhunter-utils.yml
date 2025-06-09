@@ -1,0 +1,25 @@
+- name: Apt update
+  ansible.builtin.apt:
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Install RKHunter utils on Debian
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ rkhunter_utils_debian }}"
+  changed_when: true
+  when: ansible_os_family == "Debian"
+
+- name: DNF makecache
+  ansible.builtin.dnf:
+    update_cache: true
+  when: ansible_os_family == "RedHat"
+
+- name: Install RKHunter utils on RHEL
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ rkhunter_utils_redhat }}"
+  changed_when: true
+  when: ansible_os_family == "RedHat"

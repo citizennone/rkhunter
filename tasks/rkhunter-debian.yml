@@ -6,13 +6,11 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
-  with_items:
-    - rkhunter
-    - unhide
+  loop: "{{ required_packages }}"
 
 - name: Copy rkhunter.conf
   ansible.builtin.template:
-    src: rkhunter/rkhunter.conf.j2
+    src: rkhunter.conf.j2
     dest: /etc/rkhunter.conf
     owner: root
     group: root
@@ -23,26 +21,22 @@
     path: "{{ item }}"
     state: directory
     mode: '0755'
-  loop:
-    - /var/lib/rkhunter/tmp
-    - /usr/lib/rkhunter/scripts
-    - /usr/lib/rkhunter/dbdir
-    - /usr/lib/rkhunter/dbdir/i18n
+  loop: "{{ required_directories }}"
 
 - name: RKHunter full update
-  ansible.builtin.command: rkhunter --update
+  ansible.builtin.command: "{{ rkhunter_path }} --update"
   register: rkhunter_update
   changed_when: "'No update' not in rkhunter_update.stdout"
   failed_when: false
 
 - name: Update RKHunter properties
-  ansible.builtin.command: rkhunter --propupd --nocolors
+  ansible.builtin.command: "{{ rkhunter_path }} --propupd --nocolors"
   register: rkhunter_propu
   changed_when: false
   failed_when: rkhunter_propu.rc != 0
 
 - name: Run RKHunter scan
-  ansible.builtin.command: rkhunter --check --sk --nocolors
+  ansible.builtin.command: "{{ rkhunter_path }} --check --sk --nocolors"
   register: rkhunter_scan
   changed_when: false
   failed_when: rkhunter_scan.rc not in [0, 1]
@@ -58,14 +52,12 @@
   when: "\"Found the 'unhide' command\" not in procs_output.stdout"
 
 - name: Update RKHunter database
-  ansible.builtin.command: rkhunter --update
+  ansible.builtin.command: "{{ rkhunter_path }} --update"
   register: update_status
   changed_when: true
 
-- name: Copy cronjob for everyday scans
-  ansible.builtin.template:
-    src: rkhunter/rkhunter-scan.j2
-    dest: /etc/cron.d/rkhunter-scan
-    owner: root
-    group: root
-    mode: '0644'
+- name: Cronjobs set up
+  ansible.builtin.include_tasks: tasks/rkhunter-cronjobs.yml
+
+- name: Logrotate set up
+  ansible.builtin.include_tasks: tasks/rkhunter-logrotate.yml

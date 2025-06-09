@@ -1,0 +1,16 @@
+UPDATE_MIRRORS="{{ rkhunter_config_options.update_mirrors }}"
+CRON_DAILY_RUN="{{ rkhunter_config_options.cron_daily_run }}"
+ALLOW_SSH_ROOT_USER="{{ 'yes' if rkhunter_config_options.allow_ssh_user else 'no' }}"
+ALLOW_SSH_PROT_V1="{{ rkhunter_config_options.allow_ssh_root }}"
+ALLOW_SYSLOG_REMOTE="{{ 'yes' if rkhunter_config_options.allow_syslog_remote else 'no' }}"
+USE_SYSLOG={{ rkhunter_config_options.use_syslog }}
+PORT_SCAN="{{ rkhunter_config_options.port_scan }}"
+LOGFILE="{{ rkhunter_config_options.log_file }}"
+SHOW_SUMMARY="{{ rkhunter_config_options.show_summary }}"
+#SCRIPTWHITELIST="{{ rkhunter_config_options.scriptwhitelist }}"
+SCRIPTDIR="{{ rkhunter_config_options.scriptdir }}"
+INSTALLDIR="{{ rkhunter_config_options.installdir }}"
+TMPDIR="{{ rkhunter_config_options.tmpdir }}"
+DBDIR="{{ rkhunter_config_options.dbdir }}"
+MAIL-ON-WARNING="{{ rkhunter_email }}"
+

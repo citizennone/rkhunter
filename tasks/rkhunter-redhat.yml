@@ -1,0 +1,70 @@
+---
+- name: Ensure python3 and python3-dnf are installed before using dnf
+  ansible.builtin.raw: |
+    dnf install -y python3 python3-dnf
+  changed_when: true
+
+- name: Ensure EPEL is enabled
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+
+- name: Force python interpreter for RedHat
+  ansible.builtin.set_fact:
+    ansible_python_interpreter: /usr/libexec/platform-python
+  when: ansible_os_family == "RedHat"
+
+- name: DNF makecache
+  ansible.builtin.dnf:
+    update_cache: true
+
+- name: Install required packages (excluding unhide)
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ required_packages }}"
+  when: item != 'unhide'
+
+- name: Copy rkhunter.conf
+  ansible.builtin.template:
+    src: rkhunter.conf.j2
+    dest: /etc/rkhunter.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create required directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ required_directories }}"
+
+- name: RKHunter full update
+  ansible.builtin.command: "{{ rkhunter_path }} --update"
+  register: rkhunter_update
+  changed_when: "'No update' not in rkhunter_update.stdout"
+  failed_when: false
+
+- name: Update RKHunter properties
+  ansible.builtin.command: "{{ rkhunter_path }} --propupd --nocolors"
+  register: rkhunter_propu
+  changed_when: true
+  failed_when: false
+
+- name: Run RKHunter scan
+  ansible.builtin.command: "{{ rkhunter_path }} --check --sk --nocolors"
+  register: rkhunter_scan
+  changed_when: false
+  failed_when: rkhunter_scan.rc not in [0, 1]
+
+- name: Update RKHunter database
+  ansible.builtin.command: "{{ rkhunter_path }} --update"
+  register: update_status
+  changed_when: true
+
+- name: Cronjobs set up
+  ansible.builtin.include_tasks: tasks/rkhunter-cronjobs.yml
+
+- name: Logrotate set up
+  ansible.builtin.include_tasks: tasks/rkhunter-logrotate.yml

@@ -1,11 +1,10 @@
 ---
 galaxy_info:
-  role_name: debian_hardening_lite
+  role_name: rkhunter
   author: Marcin Dołęgowski
   namespace: citizennone
   description: >
-    Lightweight security hardening role for Debian-based systems. Includes tools like rkhunter, unattended-upgrades,
-    basic SSH and sudo lockdown, log hygiene, and minimal service exposure. Ideal for minimal servers, labs, and DevOps environments.
+    Lightweight rkhunter role for Debian, RedHat and Fedora based systems. Ideal for minimal servers, labs, and DevOps environments.
 
   license: MIT
   min_ansible_version: "2.9"
@@ -15,17 +14,21 @@ galaxy_info:
         - bookworm
         - bullseye
         - buster
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+
 
   galaxy_tags:
     - debian
+    - redhat
     - security
     - hardening
-    - ssh
-    - sudo
     - monitoring
     - system
+    - rootkits
 
 dependencies: []
-
-collections:
-  - ansible.posix

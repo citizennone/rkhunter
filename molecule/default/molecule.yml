@@ -1,23 +1,22 @@
+---
+dependency:
+  name: galaxy
 driver:
   name: docker
-
 platforms:
-  - name: instance
-    build_image: true
-    dockerfile: Dockerfile
-    image: debian_python_molecule
+  - name: instance-debian
+    image: geerlingguy/docker-debian12-ansible:latest
     privileged: true
     tty: true
-    published_ports:
-      - "2222:22"
-
+  - name: instance-centos
+    image: quay.io/centos/centos:stream9
+    privileged: true
+    tty: true
+    ansible_python_interpreter: /usr/libexec/platform-python
 provisioner:
   name: ansible
-  lint: |
-    ansible-lint
-  inventory:
-    links:
-      group_vars: ../../group_vars/
-      host_vars: ../../host_vars/
-  env:
-    ANSIBLE_ROLES_PATH: ../../..
+  config_options:
+    defaults:
+      remote_tmp: /tmp/.ansible/tmp
+verifier:
+  name: ansible

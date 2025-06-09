@@ -1,0 +1,7 @@
+- name: Enable logrotate for RKHunter
+  ansible.builtin.template:
+    src: rkhunter-logrotate.conf.j2
+    dest: /etc/logrotate.d/rkhunter
+    owner: root
+    group: root
+    mode: '0644'

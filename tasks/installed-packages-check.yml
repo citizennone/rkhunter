@@ -1,8 +1,0 @@
-- name: Detect installed packages for logrotate
-  ansible.builtin.shell: |
-    set -o pipefail
-    dpkg -l | awk '{print $2}' | grep -xE '{{ logrotate_detect_packages }}' || true
-  args:
-    executable: /bin/bash
-  register: installed_packages
-  changed_when: false

@@ -1,13 +1,13 @@
 namespace: citizennone
-name: debian_hardening_lite
+name: rkhunter
 version: 1.0.0
-src: citizennone/debian_hardening_lite
+src: citizennone/rkhunter
 readme: README.md
 authors:
   - Marcin Dołęgowski <marcin.dolegowski@debian.org.pl>
 description: >
-  Lightweight security hardening role for Debian-based systems. Includes tools like rkhunter, unattended-upgrades,
-  basic SSH and sudo lockdown, log hygiene, and minimal service exposure. Ideal for minimal servers, labs, and DevOps environments.
+  Lightweight Ansible role for installing and configuring Rootkit Hunter (rkhunter) on Debian and RedHat-based systems.
+  Includes logrotate integration, optional support for additional utils, and basic configuration tweaks.
 license: MIT
 min_ansible_version: "2.9"
 platforms:
@@ -16,12 +16,18 @@ platforms:
       - bookworm
       - bullseye
       - buster
+  - name: RedHat
+    versions:
+      - 8
+      - 9
+  - name: Fedora
+    versions:
+      - all
 tags:
-  - debian
+  - rkhunter
   - security
-  - hardening
-  - ssh
-  - sudo
   - monitoring
-  - system
+  - rootkit
+  - hardening
+  - linux
 dependencies: []

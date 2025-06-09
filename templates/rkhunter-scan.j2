@@ -1,0 +1,4 @@
+MAILTO="{{ rkhunter_email }}"
+
+{{ rkhunter_cron.update_timer }} root {{ rkhunter_path }} --update --quiet
+{{ rkhunter_cron.check_timer }} root {{ rkhunter_path }} --check --cronjob --quiet

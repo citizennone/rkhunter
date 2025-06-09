@@ -1,17 +1,5 @@
-FROM debian:bookworm
+# molecule/default/Dockerfile
+FROM quay.io/rockylinux/rockylinux:8
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Install packages
-RUN apt-get update && \
-    apt-get install -y python3 sudo openssh-server && \
-    apt-get clean
-
-# Configure SSH
-RUN mkdir /var/run/sshd && \
-    echo 'root:toor' | chpasswd && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
-    sed -i 's@session\s\+required\s\+pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
-
-# Start SSH
-CMD ["/usr/sbin/sshd", "-D"]
+# Installation of: dnf, python3, python3-dnf and Ansible
+RUN dnf install -y dnf python3 python3-dnf ansible && dnf clean all

@@ -1,0 +1,15 @@
+- name: Copy cronjob for everyday scans
+  ansible.builtin.template:
+    src: rkhunter-scan.j2
+    dest: /etc/cron.d/rkhunter-scan
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy cronjob for monthly cleanup
+  ansible.builtin.template:
+    src: rkhunter-cleanup.j2
+    dest: /etc/cron.d/rkhunter-tmp-cleanup
+    owner: root
+    group: root
+    mode: '0644'
