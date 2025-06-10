@@ -1,8 +1,8 @@
 - name: Install RKHunter related tools
   ansible.builtin.include_tasks: rkhunter-utils.yml
   when: rkhunter_enabled | default(false) and rkhunter_install_utils | default(false)
-- name: Enable rkhunter for Debian
 
+- name: Enable rkhunter for Debian
   ansible.builtin.include_tasks: rkhunter-debian.yml
   when: rkhunter_enabled | default(false) and ansible_os_family == "Debian"
 
